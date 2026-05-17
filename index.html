@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <title>Gross Topology Mesh — AR Surface</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
   <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
@@ -49,9 +46,8 @@
       <a-light type="ambient"     color="#ffffff"  intensity="0.5"></a-light>
       <a-light type="directional" position="2 3 1" color="#FFB6C1" intensity="1.0"></a-light>
       <a-light type="point"       position="-1 1 -2" color="#ADD8E6" intensity="0.45"></a-light>
-
       <a-marker type="pattern" preset="custom"
-                url="./markers/pattern-Gross-TopologyMesh.patt"
+                url="pattern-Gross-TopologyMesh.patt"
                 id="marker">
 
         <a-entity id="surf"
@@ -126,6 +122,115 @@
     </div>
   </div>
 
-  <script src="controls.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+      const surf   = document.getElementById('surf');
+      const marker = document.getElementById('marker');
+      const dot    = document.getElementById('state-dot');
+      const txt    = document.getElementById('state-text');
+
+      /* ── helpers ── */
+      function getSurface()   { return surf.components['shoe-surface']; }
+      function getSpinner()   { return surf.components['spin-axis']; }
+
+      function setSurface(patch) {
+        const cur = surf.getAttribute('shoe-surface');
+        surf.setAttribute('shoe-surface', Object.assign({}, cur, patch));
+      }
+      function setSpinner(patch) {
+        const cur = surf.getAttribute('spin-axis');
+        surf.setAttribute('spin-axis', Object.assign({}, cur, patch));
+      }
+
+      /* ── marker state pill ── */
+      marker.addEventListener('markerFound', function () {
+        dot.className = 'tui-dot connected';
+        txt.textContent = 'Tracking';
+      });
+      marker.addEventListener('markerLost', function () {
+        dot.className = 'tui-dot';
+        txt.textContent = 'Scanning';
+      });
+
+      /* ── Wireframe toggle ── */
+      let wireframe = false;
+      document.getElementById('btn-wire').addEventListener('click', function () {
+        wireframe = !wireframe;
+        setSurface({ wireframe });
+        this.textContent = wireframe ? 'Solid' : 'Wireframe';
+        this.classList.toggle('on', wireframe);
+        document.getElementById('ro-mode').textContent = wireframe ? 'Wire' : 'Solid';
+      });
+
+      /* ── Palette cycle ── */
+      const palettes = [
+        { label: 'Lavender Pink', color: '#FF69B4' },
+        { label: 'Sky Blue',      color: '#87CEEB' },
+        { label: 'Mint Green',    color: '#98FF98' },
+        { label: 'Gold',          color: '#FFD700' },
+        { label: 'Violet',        color: '#7B68EE' },
+        { label: 'Coral',         color: '#FF6B6B' },
+      ];
+      let paletteIdx = 0;
+      document.getElementById('btn-color').addEventListener('click', function () {
+        paletteIdx = (paletteIdx + 1) % palettes.length;
+        const p = palettes[paletteIdx];
+        setSurface({ color: p.color });
+        this.textContent = p.label;
+      });
+
+      /* ── Rotation axis cycle ── */
+      const axisCycles = ['y', 'x', 'z', 'xy', 'yz', 'xyz'];
+      const axisLabels = ['Y', 'X', 'Z', 'X+Y', 'Y+Z', 'All'];
+      let axisIdx = 0;
+      document.getElementById('btn-axes').addEventListener('click', function () {
+        axisIdx = (axisIdx + 1) % axisCycles.length;
+        setSpinner({ axes: axisCycles[axisIdx] });
+        this.textContent = 'Axis — ' + axisLabels[axisIdx];
+        document.getElementById('ro-axis').textContent = axisLabels[axisIdx];
+      });
+
+      /* ── Scale cycle ── */
+      const scales      = [0.35, 0.55, 0.75, 1.0];
+      const scaleLabels = ['S', 'M', 'L', 'XL'];
+      let scaleIdx = 1;
+      document.getElementById('btn-size').addEventListener('click', function () {
+        scaleIdx = (scaleIdx + 1) % scales.length;
+        const s = scales[scaleIdx];
+        surf.setAttribute('scale', `${s} ${s} ${s}`);
+        this.textContent = 'Size — ' + scaleLabels[scaleIdx];
+        document.getElementById('ro-scale').textContent = s.toFixed(2);
+      });
+
+      /* ── Spin rate cycle ── */
+      const rates = [0, 0.15, 0.35, 0.65, 1.2];
+      const rateLabels = ['0.00', '0.15', '0.35', '0.65', '1.20'];
+      let rateIdx = 2;
+      document.getElementById('btn-speed').addEventListener('click', function () {
+        rateIdx = (rateIdx + 1) % rates.length;
+        const r = rates[rateIdx];
+        setSpinner({ rate: r, active: r > 0 });
+        this.textContent = 'Rate ' + rateLabels[rateIdx];
+        this.classList.toggle('on', r > 0);
+        document.getElementById('ro-rate').textContent = rateLabels[rateIdx];
+      });
+
+      /* ── Mesh density cycle ── */
+      const segs      = [20, 40, 60, 90, 120];
+      const segLabels = ['XS', 'S', 'M', 'L', 'XL'];
+      let segIdx = 2;
+      document.getElementById('btn-detail').addEventListener('click', function () {
+        segIdx = (segIdx + 1) % segs.length;
+        const n = segs[segIdx];
+        setSurface({ sSegs: n, tSegs: n });
+        this.textContent = 'Mesh — ' + segLabels[segIdx];
+        this.classList.toggle('on', segIdx >= 3);
+        document.getElementById('ro-segs').textContent = n;
+      });
+
+    });
+  </script>
+
 </body>
 </html>
