@@ -1,0 +1,131 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Gross Topology Mesh — AR Surface</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1.3.0/dist/aframe-master.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <script src="components.js"></script>
+</head>
+
+<body>
+
+  <!-- TOP STRIP -->
+  <div id="top-strip">
+    <div class="title-block">
+      <div class="big-title">3D Gross Topology Mesh</div>
+      <div class="formula-tag">Z = <span>S³/3 − T²/2</span></div>
+    </div>
+    <div id="state-pill">
+      <div class="tui-dot" id="state-dot"></div>
+      <span id="state-text">Scanning</span>
+    </div>
+  </div>
+
+  <!-- SIDE TICKER -->
+  <div id="side-ticker">
+    <span class="live">Live</span>
+    <span>AR</span>
+    <span>3D</span>
+    <span>Mesh</span>
+  </div>
+
+  <!-- CORNER BRACKETS -->
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+
+  <!-- AR SCENE -->
+  <div id="ar-wrap">
+    <a-scene embedded vr-mode-ui="enabled: false;"
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+      style="width:100%;height:100%;">
+
+      <a-light type="ambient"     color="#ffffff"  intensity="0.5"></a-light>
+      <a-light type="directional" position="2 3 1" color="#FFB6C1" intensity="1.0"></a-light>
+      <a-light type="point"       position="-1 1 -2" color="#ADD8E6" intensity="0.45"></a-light>
+
+      <a-marker type="pattern" preset="custom"
+                url="./markers/pattern-Gross-TopologyMesh.patt"
+                id="marker">
+
+        <a-entity id="surf"
+          position="0 0.15 0"
+          scale="0.55 0.55 0.55"
+          shoe-surface="sMin:-1.4; sMax:1.4; tMin:-1.0; tMax:1.0; sSegs:60; tSegs:60; zScale:0.6; color:#FF69B4; wireframe:false"
+          spin-axis="active:true; rate:0.35; axes:y">
+        </a-entity>
+
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </div>
+
+  <!-- BOTTOM PANEL -->
+  <div id="bottom-panel">
+    <div id="btn-grid">
+
+      <div class="ctrl-cell">
+        <div class="ctrl-label">Render</div>
+        <button class="ctrl-btn" id="btn-wire">Wireframe</button>
+      </div>
+
+      <div class="ctrl-cell">
+        <div class="ctrl-label">Palette</div>
+        <button class="ctrl-btn" id="btn-color">Lavender Pink</button>
+      </div>
+
+      <div class="ctrl-cell">
+        <div class="ctrl-label">Rotation</div>
+        <button class="ctrl-btn on" id="btn-axes">Axis — Y</button>
+      </div>
+
+      <div class="ctrl-cell">
+        <div class="ctrl-label">Scale</div>
+        <button class="ctrl-btn" id="btn-size">Size — M</button>
+      </div>
+
+      <div class="ctrl-cell">
+        <div class="ctrl-label">Velocity</div>
+        <button class="ctrl-btn on" id="btn-speed">Rate 0.35</button>
+      </div>
+
+      <div class="ctrl-cell">
+        <div class="ctrl-label">Density</div>
+        <button class="ctrl-btn" id="btn-detail">Mesh — M</button>
+      </div>
+
+    </div>
+
+    <div id="readout">
+      <div class="readout-row">
+        <span class="readout-key">Segs</span>
+        <span class="readout-val hi" id="ro-segs">60</span>
+      </div>
+      <div class="readout-row">
+        <span class="readout-key">Rate</span>
+        <span class="readout-val" id="ro-rate">0.35</span>
+      </div>
+      <div class="readout-row">
+        <span class="readout-key">Axis</span>
+        <span class="readout-val" id="ro-axis">Y</span>
+      </div>
+      <div class="readout-row">
+        <span class="readout-key">Scale</span>
+        <span class="readout-val" id="ro-scale">0.55</span>
+      </div>
+      <div class="readout-row">
+        <span class="readout-key">Mode</span>
+        <span class="readout-val" id="ro-mode">Solid</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="controls.js"></script>
+</body>
+</html>
